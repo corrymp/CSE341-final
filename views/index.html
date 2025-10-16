@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ARGAPI</title>
+    <meta name="author" content="Corry McConnell Palmer">
+    <meta name="description" content="ARGAPI (pronounced argh-app-ee): an API for managing ARG campaign resources">
+    <link rel="icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVQIW2NgAAIAAAUAAR4f7BQAAAAASUVORK5CYII=">
+</head>
+
+<body bgcolor="e1e1e1" text="1e1e1e" style="max-width:800px;margin:auto">
+    <header>
+        <h1>About ARGAPI</h1>
+    </header>
+
+    <main>
+        <p>ARGAPI (pronounced argh-app-ee) is an API of managing Alternate Reality Game codes and resources.</p>
+
+        <h2>How to use</h2>
+
+        <ol>
+            <li>
+                <p>
+                    Open an account by accessing <mark><a href="./login">/login</a></mark>
+                </p>
+            </li>
+
+            <li>
+                <p>
+                    Create a new campaign by making a POST request to <mark>/campaign</mark>.
+                    You will need to provide:
+                <ol>
+                    <li>a campaign <mark>title</mark>,</li>
+                    <li>a <mark>base_url</mark> (used by the public when accessing information and resources about your campaign),</li>
+                    <li>an (optional) short <mark>summary</mark> of the campaign,</li>
+                    <li>and <mark>open_at</mark> and <mark>close_at</mark> times for when the campaign goes public and concludes.</li>
+                </ol>
+                Once you have done that, the response will contain the <mark>_id</mark> to access your campaign.
+                </p>
+                <p>
+                    You can edit your campaign with a PUT request to <mark>/campaign/{campaign id}</mark> with the same data used at creation.
+                </p>
+            </li>
+
+            <li>
+                <p>
+                    Next, create a new resource for users to discover by making a POST request to <mark>/campaign/{campaign id}/resource</mark>.
+                    The request body must contain a JSON object of your data.
+                </p>
+            </li>
+
+            <li>
+                <p>
+                    Once you have done that, create a code for users to access the resource with.
+                    Do this with a POST request to <mark>/campaign/{campaign id}/code</mark> with the following:
+                <ol>
+                    <li>
+                        <mark>code</mark>:
+                        1-31 character code used in the URL along with the campaign <mark>base_url</mark> to access the resource.
+                    </li>
+                    <li>
+                        <mark>target_resource</mark>:
+                        The <mark>id</mark> of the resource to be accessed.
+                    </li>
+                    <li>
+                        <mark>valid_after</mark>:
+                        Optional.
+                        A time after which the code can be publically used. Useful for time-gated content.
+                    </li>
+                    <li>
+                        <mark>valid_until</mark>:
+                        Optional.
+                        The time after which the code will cease to work.
+                    </li>
+                </ol>
+                </p>
+            </li>
+
+            <li>
+                <p>
+                    Now that all that has been done, you can access your resource by navigating to <mark>/{campaign base url}/{code}</mark>!
+                </p>
+            </li>
+        </ol>
+    </main>
+
+    <footer>
+        <p>
+            ARGAPI is a school project by Corry McConnell Palmer.
+            No garentee is given of the service remaining online or functional.
+        </p>
+        <p>&copy;2025 | Corry McConnell Palmer</p>
+    </footer>
+</body>
+
+</html>

@@ -1,0 +1,2571 @@
+{
+    "openapi": "3.0.0",
+    "info": {
+        "title": "ARGAPI",
+        "description": "ARGAPI (pronounced are-gap-ee) allows for the creation and viewing of Alternate Reality Games and associated resources.",
+        "version": "1.0.0-oas3"
+    },
+    "servers": [
+        {
+            "url": "https://cse341-argapi.onrender.com"
+        }
+    ],
+    "security": [
+        {
+            "accessCode": ["read", "write"]
+        }
+    ],
+    "tags": [
+        {
+            "name": "info",
+            "description": "General info"
+        },
+        {
+            "name": "find",
+            "description": "Find campaigns"
+        },
+        {
+            "name": "ARG",
+            "description": "View ARG resources via codes"
+        },
+        {
+            "name": "theme",
+            "description": "Manage themes"
+        },
+        {
+            "name": "campaign",
+            "description": "Manage campaigns"
+        },
+        {
+            "name": "resource",
+            "description": "Manage resources"
+        },
+        {
+            "name": "code",
+            "description": "Manage campaign codes"
+        },
+        {
+            "name": "user",
+            "description": "Manage users"
+        },
+        {
+            "name": "manager",
+            "description": "Manage campaign managers"
+        }
+    ],
+    "paths": {
+        "/": {
+            "get": {
+                "tags": ["info"],
+                "summary": "Welcome and information page",
+                "responses": {
+                    "200": {
+                        "description": "Page returned"
+                    },
+                    "500": {
+                        "description": "Operation Failed: Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/api-docs": {
+            "get": {
+                "tags": ["info"],
+                "summary": "Swagger documentation (where you are most likely reading this)",
+                "responses": {
+                    "200": {
+                        "description": "Page returned"
+                    },
+                    "500": {
+                        "description": "Operation Failed: Internal Server Error"
+                    }
+                }
+            }
+        },
+
+        "/{baseUrl}": {
+            "get": {
+                "tags": ["ARG"],
+                "summary": "Read campaign details",
+                "parameters": [
+                    {
+                        "name": "baseUrl",
+                        "in": "path",
+                        "description": "Campaign base resource URL. Combine with a code to point to a given resource.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operation Successful: resource found"
+                    },
+                    "404": {
+                        "description": "Operation Failed: Resource Not Found"
+                    },
+                    "500": {
+                        "description": "Operation Failed: Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/{baseUrl}/{code}": {
+            "get": {
+                "tags": ["ARG"],
+                "summary": "Access campaign resource",
+                "parameters": [
+                    {
+                        "name": "baseUrl",
+                        "in": "path",
+                        "description": "Campaign base resource URL. Combine with a code to point to a given resource.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "code",
+                        "in": "path",
+                        "description": "code pointing to a given resource. Each campaign may only use a given code once.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operation Successful: resource found"
+                    },
+                    "404": {
+                        "description": "Operation Failed: Resource Not Found"
+                    },
+                    "500": {
+                        "description": "Operation Failed: Internal Server Error"
+                    }
+                }
+            }
+        },
+
+        "/find": {
+            "get": {
+                "tags": ["find"],
+                "summary": "Usage instructions for /find routes",
+                "responses": {
+                    "200": {
+                        "description": "Page returned"
+                    },
+                    "500": {
+                        "description": "Operation Failed: Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/find/theme": {
+            "get": {
+                "tags": ["find"],
+                "summary": "View all themes",
+                "responses": {
+                    "200": {
+                        "description": "Operation Successful: resource found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Themes"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Operation Failed: Unauthorized"
+                    },
+                    "403": {
+                        "description": "Operation Failed: Forbidden"
+                    },
+                    "500": {
+                        "description": "Operation Failed: Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/find/{id}": {
+            "get": {
+                "tags": ["find"],
+                "summary": "Find campaigns by theme id",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Theme ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operation Successful: resource found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Campaigns"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Operation Failed: Unauthorized"
+                    },
+                    "403": {
+                        "description": "Operation Failed: Forbidden"
+                    },
+                    "404": {
+                        "description": "Operation Failed: Resource Not Found"
+                    },
+                    "406": {
+                        "description": "Operation Failed: Invalid Parameters"
+                    },
+                    "500": {
+                        "description": "Operation Failed: Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/find/{name}": {
+            "get": {
+                "tags": ["find"],
+                "summary": "Find campaigns by theme name",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "path",
+                        "description": "name identifier for themes. Only one theme may exist with a given name.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operation Successful: resource found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Campaigns"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Operation Failed: Unauthorized"
+                    },
+                    "403": {
+                        "description": "Operation Failed: Forbidden"
+                    },
+                    "404": {
+                        "description": "Operation Failed: Resource Not Found"
+                    },
+                    "406": {
+                        "description": "Operation Failed: Invalid Parameters"
+                    },
+                    "500": {
+                        "description": "Operation Failed: Internal Server Error"
+                    }
+                }
+            }
+        },
+
+        "/find/ongoing": {
+            "get": {
+                "tags": ["find"],
+                "summary": "Find ongoing campaigns",
+                "responses": {
+                    "200": {
+                        "description": "Operation Successful: resource found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Campaigns"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Operation Failed: Unauthorized"
+                    },
+                    "403": {
+                        "description": "Operation Failed: Forbidden"
+                    },
+                    "500": {
+                        "description": "Operation Failed: Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/find/ongoing/{id}": {
+            "get": {
+                "tags": ["find"],
+                "summary": "Find ongoing campaigns by theme id",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Theme ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operation Successful: resource found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Campaigns"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Operation Failed: Unauthorized"
+                    },
+                    "403": {
+                        "description": "Operation Failed: Forbidden"
+                    },
+                    "404": {
+                        "description": "Operation Failed: Resource Not Found"
+                    },
+                    "406": {
+                        "description": "Operation Failed: Invalid Parameters"
+                    },
+                    "500": {
+                        "description": "Operation Failed: Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/find/ongoing/{name}": {
+            "get": {
+                "tags": ["find"],
+                "summary": "Find ongoing campaigns by theme name",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "path",
+                        "description": "name identifier for themes. Only one theme may exist with a given name.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operation Successful: resource found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Campaigns"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Operation Failed: Unauthorized"
+                    },
+                    "403": {
+                        "description": "Operation Failed: Forbidden"
+                    },
+                    "404": {
+                        "description": "Operation Failed: Resource Not Found"
+                    },
+                    "406": {
+                        "description": "Operation Failed: Invalid Parameters"
+                    },
+                    "500": {
+                        "description": "Operation Failed: Internal Server Error"
+                    }
+                }
+            }
+        },
+
+        "/find/concluded": {
+            "get": {
+                "tags": ["find"],
+                "summary": "Find concluded campaigns",
+                "responses": {
+                    "200": {
+                        "description": "Operation Successful: resource found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Campaigns"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Operation Failed: Unauthorized"
+                    },
+                    "403": {
+                        "description": "Operation Failed: Forbidden"
+                    },
+                    "500": {
+                        "description": "Operation Failed: Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/find/concluded/{id}": {
+            "get": {
+                "tags": ["find"],
+                "summary": "Find concluded campaigns by theme id",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Theme ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operation Successful: resource found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Campaigns"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Operation Failed: Unauthorized"
+                    },
+                    "403": {
+                        "description": "Operation Failed: Forbidden"
+                    },
+                    "404": {
+                        "description": "Operation Failed: Resource Not Found"
+                    },
+                    "406": {
+                        "description": "Operation Failed: Invalid Parameters"
+                    },
+                    "500": {
+                        "description": "Operation Failed: Internal Server Error"
+                    }
+                }
+            }
+        },
+        "/find/concluded/{name}": {
+            "get": {
+                "tags": ["find"],
+                "summary": "Find concluded campaigns by theme name",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "path",
+                        "description": "name identifier for themes. Only one theme may exist with a given name.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operation Successful: resource found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Campaigns"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Operation Failed: Unauthorized"
+                    },
+                    "403": {
+                        "description": "Operation Failed: Forbidden"
+                    },
+                    "404": {
+                        "description": "Operation Failed: Resource Not Found"
+                    },
+                    "406": {
+                        "description": "Operation Failed: Invalid Parameters"
+                    },
+                    "500": {
+                        "description": "Operation Failed: Internal Server Error"
+                    }
+                }
+            }
+        },
+
+        "/campaign": {
+            "get": {
+                "tags": ["campaign"],
+                "summary": "Get all campaigns",
+                "responses": {
+                    "200": {
+                        "description": "Operation Successful: resource found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Campaigns"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Operation Failed: Unauthorized"
+                    },
+                    "403": {
+                        "description": "Operation Failed: Forbidden"
+                    },
+                    "500": {
+                        "description": "Operation Failed: Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "accessCode": ["read"]
+                    }
+                ]
+            },
+            "post": {
+                "tags": ["campaign"],
+                "summary": "Create a new campaign",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/campaign_post_req_body"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Operation Successful: resource created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ObjectId"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Operation Failed: Unauthorized"
+                    },
+                    "403": {
+                        "description": "Operation Failed: Forbidden"
+                    },
+                    "406": {
+                        "description": "Operation Failed: Invalid Parameters"
+                    },
+                    "500": {
+                        "description": "Operation Failed: Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "accessCode": ["write"]
+                    }
+                ]
+            }
+        },
+        "/campaign/managers": {
+            "get": {
+                "tags": ["manager"],
+                "summary": "Get all managers records for all campaigns",
+                "responses": {
+                    "200": {
+                        "description": "Operation Successful: resource found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Managers"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Operation Failed: Unauthorized"
+                    },
+                    "403": {
+                        "description": "Operation Failed: Forbidden"
+                    },
+                    "500": {
+                        "description": "Operation Failed: Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "accessCode": ["read"]
+                    }
+                ]
+            }
+        },
+        "/campaign/{id}": {
+            "get": {
+                "tags": ["campaign"],
+                "summary": "View a campaign",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Campaign ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operation Successful: resource found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Campaign"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Operation Failed: Unauthorized"
+                    },
+                    "403": {
+                        "description": "Operation Failed: Forbidden"
+                    },
+                    "404": {
+                        "description": "Operation Failed: Resource Not Found"
+                    },
+                    "406": {
+                        "description": "Operation Failed: Invalid Parameters"
+                    },
+                    "500": {
+                        "description": "Operation Failed: Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "accessCode": ["read"]
+                    }
+                ]
+            },
+            "put": {
+                "tags": ["campaign"],
+                "summary": "Update a campaign",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Campaign ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/campaign_put_req_body"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Operation Successful: Resource Updated"
+                    },
+                    "304": {
+                        "description": "Operation Aborted: No Change"
+                    },
+                    "401": {
+                        "description": "Operation Failed: Unauthorized"
+                    },
+                    "403": {
+                        "description": "Operation Failed: Forbidden"
+                    },
+                    "404": {
+                        "description": "Operation Failed: Resource Not Found"
+                    },
+                    "406": {
+                        "description": "Operation Failed: Invalid Parameters"
+                    },
+                    "500": {
+                        "description": "Operation Failed: Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "accessCode": ["write"]
+                    }
+                ]
+            },
+            "delete": {
+                "tags": ["campaign"],
+                "summary": "Delete a campaign",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Campaign ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "410": {
+                        "description": "Operation Successful: Resource Deleted"
+                    },
+                    "401": {
+                        "description": "Operation Failed: Unauthorized"
+                    },
+                    "403": {
+                        "description": "Operation Failed: Forbidden"
+                    },
+                    "404": {
+                        "description": "Operation Failed: Resource Not Found"
+                    },
+                    "406": {
+                        "description": "Operation Failed: Invalid Parameters"
+                    },
+                    "500": {
+                        "description": "Operation Failed: Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "accessCode": ["write"]
+                    }
+                ]
+            }
+        },
+
+        "/campaign/{id}/code": {
+            "get": {
+                "tags": ["code"],
+                "summary": "Get all codes from a given campaign",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Campaign ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operation Successful: resource found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Codes"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Operation Failed: Unauthorized"
+                    },
+                    "403": {
+                        "description": "Operation Failed: Forbidden"
+                    },
+                    "404": {
+                        "description": "Operation Failed: Resource Not Found"
+                    },
+                    "406": {
+                        "description": "Operation Failed: Invalid Parameters"
+                    },
+                    "500": {
+                        "description": "Operation Failed: Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "accessCode": ["read"]
+                    }
+                ]
+            },
+            "post": {
+                "tags": ["code"],
+                "summary": "Create a new code for a given campaign",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Campaign ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/code_post_req_body"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Operation Successful: resource created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ObjectId"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Operation Failed: Unauthorized"
+                    },
+                    "403": {
+                        "description": "Operation Failed: Forbidden"
+                    },
+                    "404": {
+                        "description": "Operation Failed: Resource Not Found"
+                    },
+                    "406": {
+                        "description": "Operation Failed: Invalid Parameters"
+                    },
+                    "500": {
+                        "description": "Operation Failed: Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "accessCode": ["write"]
+                    }
+                ]
+            }
+        },
+        "/campaign/{id}/code/{id2}": {
+            "get": {
+                "tags": ["code"],
+                "summary": "View a code from a given campaign by id",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Campaign ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "id2",
+                        "in": "path",
+                        "description": "Code ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operation Successful: resource found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Code"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Operation Failed: Unauthorized"
+                    },
+                    "403": {
+                        "description": "Operation Failed: Forbidden"
+                    },
+                    "404": {
+                        "description": "Operation Failed: Resource Not Found"
+                    },
+                    "406": {
+                        "description": "Operation Failed: Invalid Parameters"
+                    },
+                    "500": {
+                        "description": "Operation Failed: Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "accessCode": ["read"]
+                    }
+                ]
+            },
+            "put": {
+                "tags": ["code"],
+                "summary": "Update a code from a given campaign by id",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Campaign ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "id2",
+                        "in": "path",
+                        "description": "Code ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/code_put_req_body"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Operation Successful: Resource Updated"
+                    },
+                    "304": {
+                        "description": "Operation Aborted: No Change"
+                    },
+                    "401": {
+                        "description": "Operation Failed: Unauthorized"
+                    },
+                    "403": {
+                        "description": "Operation Failed: Forbidden"
+                    },
+                    "404": {
+                        "description": "Operation Failed: Resource Not Found"
+                    },
+                    "406": {
+                        "description": "Operation Failed: Invalid Parameters"
+                    },
+                    "500": {
+                        "description": "Operation Failed: Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "accessCode": ["write"]
+                    }
+                ]
+            },
+            "delete": {
+                "tags": ["code"],
+                "summary": "Delete a code from a given campaign by id",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Campaign ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "id2",
+                        "in": "path",
+                        "description": "Code ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "410": {
+                        "description": "Operation Successful: Resource Deleted"
+                    },
+                    "401": {
+                        "description": "Operation Failed: Unauthorized"
+                    },
+                    "403": {
+                        "description": "Operation Failed: Forbidden"
+                    },
+                    "404": {
+                        "description": "Operation Failed: Resource Not Found"
+                    },
+                    "406": {
+                        "description": "Operation Failed: Invalid Parameters"
+                    },
+                    "500": {
+                        "description": "Operation Failed: Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "accessCode": ["write"]
+                    }
+                ]
+            }
+        },
+        "/campaign/{id}/code/{code}": {
+            "get": {
+                "tags": ["code"],
+                "summary": "View a code from a given campaign",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Campaign ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "code",
+                        "in": "path",
+                        "description": "code pointing to a given resource. Each campaign may only use a given code once.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operation Successful: resource found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Code"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Operation Failed: Unauthorized"
+                    },
+                    "403": {
+                        "description": "Operation Failed: Forbidden"
+                    },
+                    "404": {
+                        "description": "Operation Failed: Resource Not Found"
+                    },
+                    "406": {
+                        "description": "Operation Failed: Invalid Parameters"
+                    },
+                    "500": {
+                        "description": "Operation Failed: Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "accessCode": ["read"]
+                    }
+                ]
+            }
+        },
+
+        "/campaign/{id}/resource": {
+            "get": {
+                "tags": ["resource"],
+                "summary": "View all resources from a given campaign",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Campaign ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operation Successful: resource found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Resources"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Operation Failed: Unauthorized"
+                    },
+                    "403": {
+                        "description": "Operation Failed: Forbidden"
+                    },
+                    "404": {
+                        "description": "Operation Failed: Resource Not Found"
+                    },
+                    "406": {
+                        "description": "Operation Failed: Invalid Parameters"
+                    },
+                    "500": {
+                        "description": "Operation Failed: Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "accessCode": ["read"]
+                    }
+                ]
+            },
+            "post": {
+                "tags": ["resource"],
+                "summary": "Create a new resource for a given campaign",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Campaign ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/resource_post_req_body"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Operation Successful: resource created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ObjectId"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Operation Failed: Unauthorized"
+                    },
+                    "403": {
+                        "description": "Operation Failed: Forbidden"
+                    },
+                    "406": {
+                        "description": "Operation Failed: Invalid Parameters"
+                    },
+                    "500": {
+                        "description": "Operation Failed: Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "accessCode": ["write"]
+                    }
+                ]
+            }
+        },
+        "/campaign/{id}/resource/{id2}": {
+            "get": {
+                "tags": ["resource"],
+                "summary": "View a resource from a given campaign",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Campaign ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "id2",
+                        "in": "path",
+                        "description": "Resource ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operation Successful: resource found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Resource"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Operation Failed: Unauthorized"
+                    },
+                    "403": {
+                        "description": "Operation Failed: Forbidden"
+                    },
+                    "404": {
+                        "description": "Operation Failed: Resource Not Found"
+                    },
+                    "406": {
+                        "description": "Operation Failed: Invalid Parameters"
+                    },
+                    "500": {
+                        "description": "Operation Failed: Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "accessCode": ["read"]
+                    }
+                ]
+            },
+            "put": {
+                "tags": ["resource"],
+                "summary": "Update a resource from a given campaign",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Campaign ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "id2",
+                        "in": "path",
+                        "description": "Resource ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/resource_put_req_body"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Operation Successful: Resource Updated"
+                    },
+                    "304": {
+                        "description": "Operation Aborted: No Change"
+                    },
+                    "401": {
+                        "description": "Operation Failed: Unauthorized"
+                    },
+                    "403": {
+                        "description": "Operation Failed: Forbidden"
+                    },
+                    "404": {
+                        "description": "Operation Failed: Resource Not Found"
+                    },
+                    "406": {
+                        "description": "Operation Failed: Invalid Parameters"
+                    },
+                    "500": {
+                        "description": "Operation Failed: Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "accessCode": ["write"]
+                    }
+                ]
+            },
+            "delete": {
+                "tags": ["resource"],
+                "summary": "Delete a resource from a given campaign",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Campaign ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "id2",
+                        "in": "path",
+                        "description": "Resource ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "410": {
+                        "description": "Operation Successful: Resource Deleted"
+                    },
+                    "401": {
+                        "description": "Operation Failed: Unauthorized"
+                    },
+                    "403": {
+                        "description": "Operation Failed: Forbidden"
+                    },
+                    "404": {
+                        "description": "Operation Failed: Resource Not Found"
+                    },
+                    "406": {
+                        "description": "Operation Failed: Invalid Parameters"
+                    },
+                    "500": {
+                        "description": "Operation Failed: Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "accessCode": ["write"]
+                    }
+                ]
+            }
+        },
+
+        "/campaign/{id}/manager": {
+            "get": {
+                "tags": ["manager"],
+                "summary": "View all managers for a given campaign",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Campaign ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operation Successful: resource found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Users"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Operation Failed: Unauthorized"
+                    },
+                    "403": {
+                        "description": "Operation Failed: Forbidden"
+                    },
+                    "404": {
+                        "description": "Operation Failed: Resource Not Found"
+                    },
+                    "406": {
+                        "description": "Operation Failed: Invalid Parameters"
+                    },
+                    "500": {
+                        "description": "Operation Failed: Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "accessCode": ["read"]
+                    }
+                ]
+            }
+        },
+        "/campaign/{id}/manager/{id2}": {
+            "post": {
+                "tags": ["manager"],
+                "summary": "assign new manager",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Campaign ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "id2",
+                        "in": "path",
+                        "description": "User ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Operation Successful: resource created"
+                    },
+                    "401": {
+                        "description": "Operation Failed: Unauthorized"
+                    },
+                    "403": {
+                        "description": "Operation Failed: Forbidden"
+                    },
+                    "406": {
+                        "description": "Operation Failed: Invalid Parameters"
+                    },
+                    "500": {
+                        "description": "Operation Failed: Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "accessCode": ["write"]
+                    }
+                ]
+            },
+            "delete": {
+                "tags": ["manager"],
+                "summary": "Delete a resource from a given campaign",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Campaign ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "id2",
+                        "in": "path",
+                        "description": "User ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "410": {
+                        "description": "Operation Successful: Resource Deleted"
+                    },
+                    "401": {
+                        "description": "Operation Failed: Unauthorized"
+                    },
+                    "403": {
+                        "description": "Operation Failed: Forbidden"
+                    },
+                    "404": {
+                        "description": "Operation Failed: Resource Not Found"
+                    },
+                    "406": {
+                        "description": "Operation Failed: Invalid Parameters"
+                    },
+                    "500": {
+                        "description": "Operation Failed: Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "accessCode": ["write"]
+                    }
+                ]
+            }
+        },
+        "/campaign/{id}/manager/{id2}/{id3}": {
+            "put": {
+                "tags": ["manager"],
+                "summary": "shift management perms of a user from one campaign to another",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Campaign ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "id2",
+                        "in": "path",
+                        "description": "user ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "id3",
+                        "in": "path",
+                        "description": "Campaign ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operation Successful: Resource Updated"
+                    },
+                    "401": {
+                        "description": "Operation Failed: Unauthorized"
+                    },
+                    "403": {
+                        "description": "Operation Failed: Forbidden"
+                    },
+                    "404": {
+                        "description": "Operation Failed: Resource Not Found"
+                    },
+                    "406": {
+                        "description": "Operation Failed: Invalid Parameters"
+                    },
+                    "500": {
+                        "description": "Operation Failed: Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "accessCode": ["write"]
+                    }
+                ]
+            }
+        },
+        "/campaign/{id}/manager/{id2}/user/{id3}": {
+            "put": {
+                "tags": ["manager"],
+                "summary": "switch out a manager of a campaign with another user",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Campaign ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "id2",
+                        "in": "path",
+                        "description": "user ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    },
+                    {
+                        "name": "id3",
+                        "in": "path",
+                        "description": "user ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operation Successful: Resource Updated"
+                    },
+                    "401": {
+                        "description": "Operation Failed: Unauthorized"
+                    },
+                    "403": {
+                        "description": "Operation Failed: Forbidden"
+                    },
+                    "404": {
+                        "description": "Operation Failed: Resource Not Found"
+                    },
+                    "406": {
+                        "description": "Operation Failed: Invalid Parameters"
+                    },
+                    "500": {
+                        "description": "Operation Failed: Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "accessCode": ["write"]
+                    }
+                ]
+            }
+        },
+
+        "/theme": {
+            "get": {
+                "tags": ["theme"],
+                "summary": "View all Themes",
+                "responses": {
+                    "200": {
+                        "description": "Operation Successful: resource found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Themes"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Operation Failed: Unauthorized"
+                    },
+                    "403": {
+                        "description": "Operation Failed: Forbidden"
+                    },
+                    "500": {
+                        "description": "Operation Failed: Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "accessCode": ["read"]
+                    }
+                ]
+            },
+            "post": {
+                "tags": ["theme"],
+                "summary": "Create a new theme",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/theme_post_req_body"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Operation Successful: resource created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ObjectId"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Operation Failed: Unauthorized"
+                    },
+                    "403": {
+                        "description": "Operation Failed: Forbidden"
+                    },
+                    "406": {
+                        "description": "Operation Failed: Invalid Parameters"
+                    },
+                    "500": {
+                        "description": "Operation Failed: Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "accessCode": ["write"]
+                    }
+                ]
+            }
+        },
+        "/theme/{id}": {
+            "get": {
+                "tags": ["theme"],
+                "summary": "View a theme by id",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Theme ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operation Successful: resource found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Theme"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Operation Failed: Unauthorized"
+                    },
+                    "403": {
+                        "description": "Operation Failed: Forbidden"
+                    },
+                    "404": {
+                        "description": "Operation Failed: Resource Not Found"
+                    },
+                    "406": {
+                        "description": "Operation Failed: Invalid Parameters"
+                    },
+                    "500": {
+                        "description": "Operation Failed: Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "accessCode": ["read"]
+                    }
+                ]
+            },
+            "put": {
+                "tags": ["theme"],
+                "summary": "Update a theme",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Theme ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/theme_put_req_body"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Operation Successful: Resource Updated"
+                    },
+                    "304": {
+                        "description": "Operation Aborted: No Change"
+                    },
+                    "401": {
+                        "description": "Operation Failed: Unauthorized"
+                    },
+                    "403": {
+                        "description": "Operation Failed: Forbidden"
+                    },
+                    "404": {
+                        "description": "Operation Failed: Resource Not Found"
+                    },
+                    "406": {
+                        "description": "Operation Failed: Invalid Parameters"
+                    },
+                    "500": {
+                        "description": "Operation Failed: Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "accessCode": ["write"]
+                    }
+                ]
+            },
+            "delete": {
+                "tags": ["theme"],
+                "summary": "Delete a theme",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "Theme ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "410": {
+                        "description": "Operation Successful: Resource Deleted"
+                    },
+                    "401": {
+                        "description": "Operation Failed: Unauthorized"
+                    },
+                    "403": {
+                        "description": "Operation Failed: Forbidden"
+                    },
+                    "404": {
+                        "description": "Operation Failed: Resource Not Found"
+                    },
+                    "406": {
+                        "description": "Operation Failed: Invalid Parameters"
+                    },
+                    "500": {
+                        "description": "Operation Failed: Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "accessCode": ["write"]
+                    }
+                ]
+            }
+        },
+        "/theme/{name}": {
+            "get": {
+                "tags": ["theme"],
+                "summary": "View a theme",
+                "parameters": [
+                    {
+                        "name": "name",
+                        "in": "path",
+                        "description": "name identifier for themes. Only one theme may exist with a given name.",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operation Successful: resource found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Theme"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Operation Failed: Unauthorized"
+                    },
+                    "403": {
+                        "description": "Operation Failed: Forbidden"
+                    },
+                    "404": {
+                        "description": "Operation Failed: Resource Not Found"
+                    },
+                    "406": {
+                        "description": "Operation Failed: Invalid Parameters"
+                    },
+                    "500": {
+                        "description": "Operation Failed: Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "accessCode": ["read"]
+                    }
+                ]
+            }
+        },
+
+        "/user": {
+            "get": {
+                "tags": ["user"],
+                "summary": "View all Users",
+                "responses": {
+                    "200": {
+                        "description": "Operation Successful: resource found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Users"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Operation Failed: Unauthorized"
+                    },
+                    "403": {
+                        "description": "Operation Failed: Forbidden"
+                    },
+                    "500": {
+                        "description": "Operation Failed: Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "accessCode": ["read"]
+                    }
+                ]
+            },
+            "post": {
+                "tags": ["user"],
+                "summary": "Create a new user",
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/user_post_req_body"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "201": {
+                        "description": "Operation Successful: resource created",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/ObjectId"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Operation Failed: Unauthorized"
+                    },
+                    "403": {
+                        "description": "Operation Failed: Forbidden"
+                    },
+                    "406": {
+                        "description": "Operation Failed: Invalid Parameters"
+                    },
+                    "500": {
+                        "description": "Operation Failed: Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "accessCode": ["write"]
+                    }
+                ]
+            }
+        },
+        "/user/{id}": {
+            "get": {
+                "tags": ["user"],
+                "summary": "View a user",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operation Successful: resource found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/User"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Operation Failed: Unauthorized"
+                    },
+                    "403": {
+                        "description": "Operation Failed: Forbidden"
+                    },
+                    "404": {
+                        "description": "Operation Failed: Resource Not Found"
+                    },
+                    "406": {
+                        "description": "Operation Failed: Invalid Parameters"
+                    },
+                    "500": {
+                        "description": "Operation Failed: Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "accessCode": ["read"]
+                    }
+                ]
+            },
+            "put": {
+                "tags": ["user"],
+                "summary": "Update a user",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "requestBody": {
+                    "content": {
+                        "application/json": {
+                            "schema": {
+                                "$ref": "#/components/schemas/user_put_req_body"
+                            }
+                        }
+                    }
+                },
+                "responses": {
+                    "200": {
+                        "description": "Operation Successful: Resource Updated"
+                    },
+                    "304": {
+                        "description": "Operation Aborted: No Change"
+                    },
+                    "401": {
+                        "description": "Operation Failed: Unauthorized"
+                    },
+                    "403": {
+                        "description": "Operation Failed: Forbidden"
+                    },
+                    "404": {
+                        "description": "Operation Failed: Resource Not Found"
+                    },
+                    "406": {
+                        "description": "Operation Failed: Invalid Parameters"
+                    },
+                    "500": {
+                        "description": "Operation Failed: Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "accessCode": ["write"]
+                    }
+                ]
+            },
+            "delete": {
+                "tags": ["user"],
+                "summary": "Delete a user",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "410": {
+                        "description": "Operation Successful: Resource Deleted"
+                    },
+                    "401": {
+                        "description": "Operation Failed: Unauthorized"
+                    },
+                    "403": {
+                        "description": "Operation Failed: Forbidden"
+                    },
+                    "404": {
+                        "description": "Operation Failed: Resource Not Found"
+                    },
+                    "406": {
+                        "description": "Operation Failed: Invalid Parameters"
+                    },
+                    "500": {
+                        "description": "Operation Failed: Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "accessCode": ["write"]
+                    }
+                ]
+            }
+        },
+        "/user/{id}/campaigns": {
+            "get": {
+                "tags": ["user"],
+                "summary": "View campaigns a user manages",
+                "parameters": [
+                    {
+                        "name": "id",
+                        "in": "path",
+                        "description": "User ID",
+                        "required": true,
+                        "schema": {
+                            "type": "string"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Operation Successful: resource found",
+                        "content": {
+                            "application/json": {
+                                "schema": {
+                                    "$ref": "#/components/schemas/Campaigns"
+                                }
+                            }
+                        }
+                    },
+                    "401": {
+                        "description": "Operation Failed: Unauthorized"
+                    },
+                    "403": {
+                        "description": "Operation Failed: Forbidden"
+                    },
+                    "406": {
+                        "description": "Operation Failed: Invalid Parameters"
+                    },
+                    "500": {
+                        "description": "Operation Failed: Internal Server Error"
+                    }
+                },
+                "security": [
+                    {
+                        "accessCode": ["read"]
+                    }
+                ]
+            }
+        }
+    },
+    "components": {
+        "schemas": {
+            "ObjectId": {
+                "title": "ObjectId",
+                "maxLength": 24,
+                "minLength": 24,
+                "pattern": "^[0-9a-fA-]{24}$",
+                "type": "string",
+                "example": "68bc77744ccebcf0bde18f7a"
+            },
+            "AccountType": {
+                "title": "AccountType",
+                "type": "string",
+                "enum": ["VIEWER", "ORGANIZER", "ADMIN"]
+            },
+            "Code": {
+                "title": "Code",
+                "type": "object",
+                "properties": {
+                    "_id": {
+                        "$ref": "#/components/schemas/ObjectId"
+                    },
+                    "code": {
+                        "type": "string"
+                    },
+                    "target_resource": {
+                        "$ref": "#/components/schemas/ObjectId"
+                    },
+                    "home_campaign": {
+                        "$ref": "#/components/schemas/ObjectId"
+                    },
+                    "valid_until": {
+                        "type": "integer"
+                    },
+                    "valid_after": {
+                        "type": "integer"
+                    }
+                }
+            },
+            "Resource": {
+                "type": "object",
+                "properties": {
+                    "_id": {
+                        "$ref": "#/components/schemas/ObjectId"
+                    },
+                    "home_campaign": {
+                        "$ref": "#/components/schemas/ObjectId"
+                    },
+                    "resource": {
+                        "$ref": "#/components/schemas/Resource_resource"
+                    }
+                }
+            },
+            "Manager": {
+                "type": "object",
+                "properties": {
+                    "user": {
+                        "$ref": "#/components/schemas/ObjectId"
+                    },
+                    "campaign": {
+                        "$ref": "#/components/schemas/ObjectId"
+                    }
+                }
+            },
+            "User": {
+                "type": "object",
+                "properties": {
+                    "_id": {
+                        "$ref": "#/components/schemas/ObjectId"
+                    },
+                    "account": {
+                        "type": "object",
+                        "properties": {}
+                    },
+                    "code": {
+                        "type": "string",
+                        "enum": ["VIEWER", "ORGANIZER", "ADMIN"]
+                    }
+                }
+            },
+            "Campaign": {
+                "type": "object",
+                "properties": {
+                    "_id": {
+                        "$ref": "#/components/schemas/ObjectId"
+                    },
+                    "base_url": {
+                        "type": "string"
+                    },
+                    "title": {
+                        "type": "string"
+                    },
+                    "summary": {
+                        "type": "string"
+                    },
+                    "theme": {
+                        "$ref": "#/components/schemas/ObjectId"
+                    },
+                    "open_at": {
+                        "type": "integer"
+                    },
+                    "close_at": {
+                        "type": "integer"
+                    },
+                    "invalid_code": {
+                        "$ref": "#/components/schemas/ObjectId"
+                    }
+                }
+            },
+            "Theme": {
+                "type": "object",
+                "properties": {
+                    "_id": {
+                        "$ref": "#/components/schemas/ObjectId"
+                    },
+                    "name": {
+                        "type": "string"
+                    },
+                    "description": {
+                        "type": "string"
+                    }
+                }
+            },
+            "Codes": {
+                "title": "Codes",
+                "type": "object",
+                "properties": {
+                    "codes": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Code"
+                        }
+                    }
+                }
+            },
+            "Resources": {
+                "title": "Resources",
+                "type": "object",
+                "properties": {
+                    "resources": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Resource"
+                        }
+                    }
+                }
+            },
+            "Managers": {
+                "title": "Managers",
+                "type": "object",
+                "properties": {
+                    "managers": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Manager"
+                        }
+                    }
+                }
+            },
+            "Users": {
+                "title": "Users",
+                "type": "object",
+                "properties": {
+                    "users": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/User"
+                        }
+                    }
+                }
+            },
+            "Campaigns": {
+                "title": "Campaigns",
+                "type": "object",
+                "properties": {
+                    "campaigns": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Campaign"
+                        }
+                    }
+                }
+            },
+            "Themes": {
+                "title": "Themes",
+                "type": "object",
+                "properties": {
+                    "themes": {
+                        "type": "array",
+                        "items": {
+                            "$ref": "#/components/schemas/Theme"
+                        }
+                    }
+                }
+            },
+            "campaign_post_req_body": {
+                "required": ["base_url", "title"],
+                "type": "object",
+                "properties": {
+                    "base_url": {
+                        "maxLength": 15,
+                        "minLength": 3,
+                        "type": "string",
+                        "example": "rohanmystery"
+                    },
+                    "title": {
+                        "maxLength": 32,
+                        "minLength": 3,
+                        "type": "string",
+                        "example": "Mystery in the Plains of Rohan"
+                    },
+                    "summary": {
+                        "maxLength": 255,
+                        "type": "string",
+                        "example": "Something has happened in Rohan. What happened? Well, that's for you to discover..."
+                    },
+                    "theme": {
+                        "$ref": "#/components/schemas/ObjectId"
+                    },
+                    "open_at": {
+                        "type": "string"
+                    },
+                    "close_at": {
+                        "type": "string"
+                    }
+                }
+            },
+            "campaign_put_req_body": {
+                "type": "object",
+                "properties": {
+                    "base_url": {
+                        "maxLength": 15,
+                        "minLength": 3,
+                        "type": "string",
+                        "example": "rohanmystery"
+                    },
+                    "title": {
+                        "maxLength": 32,
+                        "minLength": 3,
+                        "type": "string",
+                        "example": "Mystery in the Plains of Rohan"
+                    },
+                    "summary": {
+                        "maxLength": 255,
+                        "type": "string",
+                        "example": "Something has happened in Rohan. What happened? Well, that's for you to discover..."
+                    },
+                    "theme": {
+                        "$ref": "#/components/schemas/ObjectId"
+                    },
+                    "open_at": {
+                        "type": "string"
+                    },
+                    "close_at": {
+                        "type": "string"
+                    },
+                    "invalid_code": {
+                        "$ref": "#/components/schemas/ObjectId"
+                    }
+                }
+            },
+            "code_post_req_body": {
+                "required": ["code", "target_resource"],
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "maxLength": 31,
+                        "minLength": 1,
+                        "type": "string",
+                        "example": "theoden"
+                    },
+                    "target_resource": {
+                        "$ref": "#/components/schemas/ObjectId"
+                    },
+                    "valid_after": {
+                        "type": "string"
+                    },
+                    "valid_until": {
+                        "type": "string"
+                    }
+                }
+            },
+            "code_put_req_body": {
+                "type": "object",
+                "properties": {
+                    "code": {
+                        "maxLength": 31,
+                        "minLength": 1,
+                        "type": "string",
+                        "example": "theoden"
+                    },
+                    "target_resource": {
+                        "$ref": "#/components/schemas/ObjectId"
+                    },
+                    "home_campaign": {
+                        "$ref": "#/components/schemas/ObjectId"
+                    },
+                    "valid_after": {
+                        "type": "string"
+                    },
+                    "valid_until": {
+                        "type": "string"
+                    }
+                }
+            },
+            "resource_post_req_body": {
+                "required": ["resource"],
+                "type": "object",
+                "properties": {
+                    "resource": {
+                        "$ref": "#/components/schemas/Resource_resource"
+                    }
+                }
+            },
+            "resource_put_req_body": {
+                "required": ["resource"],
+                "type": "object",
+                "properties": {
+                    "home_campaign": {
+                        "$ref": "#/components/schemas/ObjectId"
+                    },
+                    "resource": {
+                        "$ref": "#/components/schemas/Resource_resource"
+                    }
+                }
+            },
+            "theme_post_req_body": {
+                "required": ["description", "name"],
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "maxLength": 32,
+                        "minLength": 2,
+                        "type": "string",
+                        "example": "High Fantasy"
+                    },
+                    "description": {
+                        "maxLength": 127,
+                        "type": "string",
+                        "example": "High Fantasy is known for its use of swords, magic, and often elves."
+                    }
+                }
+            },
+            "theme_put_req_body": {
+                "type": "object",
+                "properties": {
+                    "name": {
+                        "maxLength": 32,
+                        "minLength": 2,
+                        "type": "string",
+                        "example": "High Fantasy"
+                    },
+                    "description": {
+                        "maxLength": 127,
+                        "type": "string",
+                        "example": "High Fantasy is known for its use of swords, magic, and often elves."
+                    }
+                }
+            },
+            "user_post_req_body": {
+                "required": ["account", "type"],
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "$ref": "#/components/schemas/AccountType"
+                    },
+                    "account": {
+                        "type": "object",
+                        "properties": {}
+                    }
+                }
+            },
+            "user_put_req_body": {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "$ref": "#/components/schemas/AccountType"
+                    },
+                    "account": {
+                        "type": "object",
+                        "properties": {}
+                    }
+                }
+            },
+            "Resource_resource": {
+                "type": "object",
+                "properties": {
+                    "type": {
+                        "type": "string"
+                    },
+                    "<type>": {
+                        "type": "string"
+                    }
+                }
+            }
+        },
+        "securitySchemes": {
+            "accessCode": {
+                "type": "oauth2",
+                "flows": {
+                    "authorizationCode": {
+                        "authorizationUrl": "https://cse341-argapi.onrender.com/login",
+                        "tokenUrl": "https://cse341-argapi.onrender.com/login",
+                        "scopes": {
+                            "write": "allows modifying resources",
+                            "read": "allows reading resources"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
