@@ -7,7 +7,7 @@
     },
     "servers": [
         {
-            "url": "https://cse341-argapi.onrender.com"
+            "url": "https://argapi.onrender.com"
         }
     ],
     "security": [
@@ -2557,8 +2557,8 @@
                 "type": "oauth2",
                 "flows": {
                     "authorizationCode": {
-                        "authorizationUrl": "https://cse341-argapi.onrender.com/login",
-                        "tokenUrl": "https://cse341-argapi.onrender.com/login",
+                        "authorizationUrl": "https://argapi.onrender.com/login",
+                        "tokenUrl": "https://argapi.onrender.com/login",
                         "scopes": {
                             "write": "allows modifying resources",
                             "read": "allows reading resources"
