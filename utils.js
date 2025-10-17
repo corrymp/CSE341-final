@@ -5,7 +5,7 @@ const { param, validationResult } = require('express-validator');
 const DEVELOPMENT = 'development';
 
 const strs = {
-    Connected: `database conected - app listening on ${process.env.HOST}:${process.env.PORT}`,
+    Connected: `database conected - app listening on ${process.env.SCHEME}://${process.env.HOST}:${process.env.PORT}`,
     Unauthorized: 'Unauthorized - please authenticate',
     RequestErr: 'An error occured whilst fulfilling the request.',
     Denied: 'Access Denied',
@@ -256,10 +256,12 @@ validator.path = () => [sanitize('id').isMongoId(), sanitize('id2').isMongoId(),
  * @description verifies authenticity of JWT; pass: calls next function; else: redirect to login
  */
 function verifyJwt(req, res, next) {
-    if (!req.cookies.jwt) return next();
-    jwt.verify(req.cookies.jwt, process.env.ACCESS_TOKEN_SECRET, (err, data) => {
+    let cookie = req.cookies.jwt ?? req.cookies[process.env.CK_NAME];
+    if (!cookie) return next();
+    jwt.verify(cookie, process.env.ACCESS_TOKEN_SECRET, (err, data) => {
         if (err) {
             res.clearCookie('jwt');
+            res.clearCookie(process.env.CK_NAME);
             cannedResponse.Unauthorized(res, strs.Unauthorized);
             return;
         }
@@ -304,6 +306,14 @@ function requiredPermissionLevel(level, allowSelf = false) {
     };
 }
 
+function requiresAuth() {
+    const baseRequiresAuth = require('express-openid-connect').requiresAuth();
+    return (req, res, next) => {
+        if (res.locals.loggedin) return next();
+        baseRequiresAuth(req, res, next);
+    };
+}
+
 //#endregion authentication
 
 const handleErrors = fn => (req, res, next) => Promise.resolve(fn(req, res, next)).catch(next);
@@ -321,5 +331,6 @@ module.exports = {
     verifyJwt,
     grantJwt,
     requiredPermissionLevel,
+    requiresAuth,
     strs
 };

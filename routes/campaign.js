@@ -1,15 +1,14 @@
 const router = require('express').Router();
 const campaign = require('../controllers/campaign');
 const campaignValidator = require('../validation/campaign');
-const { requiresAuth } = require('express-openid-connect');
-const { requiredPermissionLevel, validator } = require('../utils');
+const { requiredPermissionLevel, validator, requiresAuth } = require('../utils');
 
 // req.params breaks if I have part if them in here and part in there
 // no add. auth, some admin only
-router.use(require('./code'));
+router.use(requiresAuth(), require('./code'));
 // no add. auth
-router.use(require('./resource'));
-router.use(require('./manager'));
+router.use(requiresAuth(), require('./resource'));
+router.use(requiresAuth(), require('./manager'));
 
 router.post('/', requiresAuth(), requiredPermissionLevel('ORGANIZER'), campaignValidator.create(), validator, campaign.postCampaign); // /campaign POST => create campaign
 

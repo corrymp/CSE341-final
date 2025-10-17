@@ -1,8 +1,7 @@
 const router = require('express').Router();
 const theme = require('../controllers/theme');
 const themeValidator = require('../validation/theme');
-const { validator, requiredPermissionLevel } = require('../utils');
-const { requiresAuth } = require('express-openid-connect');
+const { validator, requiredPermissionLevel, requiresAuth } = require('../utils');
 
 router.post('/', requiresAuth(), requiredPermissionLevel('ADMIN'), themeValidator.create(), validator, theme.postTheme); // /theme POST => (protected:admin) create theme
 

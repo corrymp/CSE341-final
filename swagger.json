@@ -692,9 +692,6 @@
                     "200": {
                         "description": "Operation Successful: Resource Updated"
                     },
-                    "304": {
-                        "description": "Operation Aborted: No Change"
-                    },
                     "401": {
                         "description": "Operation Failed: Unauthorized"
                     },
@@ -956,9 +953,6 @@
                 "responses": {
                     "200": {
                         "description": "Operation Successful: Resource Updated"
-                    },
-                    "304": {
-                        "description": "Operation Aborted: No Change"
                     },
                     "401": {
                         "description": "Operation Failed: Unauthorized"
@@ -1286,9 +1280,6 @@
                     "200": {
                         "description": "Operation Successful: Resource Updated"
                     },
-                    "304": {
-                        "description": "Operation Aborted: No Change"
-                    },
                     "401": {
                         "description": "Operation Failed: Unauthorized"
                     },
@@ -1349,6 +1340,9 @@
                     },
                     "406": {
                         "description": "Operation Failed: Invalid Parameters"
+                    },
+                    "409": {
+                        "description": "Operation Failed: Resource in use elsewhere"
                     },
                     "500": {
                         "description": "Operation Failed: Internal Server Error"
@@ -1778,9 +1772,6 @@
                     "200": {
                         "description": "Operation Successful: Resource Updated"
                     },
-                    "304": {
-                        "description": "Operation Aborted: No Change"
-                    },
                     "401": {
                         "description": "Operation Failed: Unauthorized"
                     },
@@ -1832,6 +1823,9 @@
                     },
                     "406": {
                         "description": "Operation Failed: Invalid Parameters"
+                    },
+                    "409": {
+                        "description": "Operation Failed: Resource in use elsewhere"
                     },
                     "500": {
                         "description": "Operation Failed: Internal Server Error"
@@ -2042,9 +2036,6 @@
                 "responses": {
                     "200": {
                         "description": "Operation Successful: Resource Updated"
-                    },
-                    "304": {
-                        "description": "Operation Aborted: No Change"
                     },
                     "401": {
                         "description": "Operation Failed: Unauthorized"

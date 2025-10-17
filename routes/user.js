@@ -2,8 +2,7 @@ const router = require('express').Router();
 const user = require('../controllers/user');
 const manager = require('../controllers/manager');
 const userValidator = require('../validation/user');
-const { requiredPermissionLevel, validator } = require('../utils');
-const { requiresAuth } = require('express-openid-connect');
+const { requiredPermissionLevel, validator, requiresAuth } = require('../utils');
 
 router.get('/:id/campaigns', requiresAuth(), requiredPermissionLevel('ADMIN', true), manager.getCampaignsManagedByUser); // /user/{id}/camapigns GET
 

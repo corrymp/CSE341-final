@@ -86,8 +86,8 @@ async function putManagerChangeCampaign(req, res) {
         const oldCampaignId = req.params.id;
         const userId = req.params.id2;
         const newCampaignId = req.params.id3;
-        const oldPermissions = Manager.findOne({ user: userId, campaign: oldCampaignId });
-        const newPermissions = Manager.findOne({ user: userId, campaign: newCampaignId });
+        const oldPermissions = await Manager.findOne({ user: userId, campaign: oldCampaignId });
+        const newPermissions = await Manager.findOne({ user: userId, campaign: newCampaignId });
         if (!oldPermissions && newPermissions) return cannedResponse.NotAcceptable(res, strs.User.PossibleIDSwap);
         if (!oldPermissions) return cannedResponse.NotFound(res, strs.User.NotManager);
         if (newPermissions) return cannedResponse.NotAcceptable(res, strs.User.AlreadyManager);
@@ -106,8 +106,8 @@ async function putManagerChangeUser(req, res) {
         const campaignId = req.params.id;
         const oldUserId = req.params.id2;
         const newUserId = req.params.id3;
-        const oldPermissions = Manager.findOne({ user: oldUserId, campaign: campaignId });
-        const newPermissions = Manager.findOne({ user: newUserId, campaign: campaignId });
+        const oldPermissions = await Manager.findOne({ user: oldUserId, campaign: campaignId });
+        const newPermissions = await Manager.findOne({ user: newUserId, campaign: campaignId });
         if (!oldPermissions && newPermissions) return cannedResponse.NotAcceptable(res, strs.User.PossibleIDSwap);
         if (!oldPermissions) return cannedResponse.NotFound(res, strs.User.NotManager);
         if (newPermissions) return cannedResponse.NotAcceptable(res, strs.User.AlreadyManager);

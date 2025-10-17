@@ -54,7 +54,7 @@ async function putTheme(req, res) {
         theme.description = req.body.description ?? theme.description;
 
         await theme.save();
-        cannedResponse.NoContent(res, strs.Theme.Updated);
+        cannedResponse.OK(res, strs.Theme.Updated);
     } catch (e) {
         console.error(e);
         cannedResponse.InternalServerError(res);
@@ -64,12 +64,12 @@ async function putTheme(req, res) {
 // /theme/{id} DELETE => (protected:admin) delete theme
 async function deleteTheme(req, res) {
     try {
-        const theme = Theme.findById(req.params.id);
+        const theme = await Theme.findById(req.params.id);
         if (!theme) return cannedResponse.NotFound(res, strs.Theme.Unknown);
-
-        if (await Campaign.find({ theme: theme._id })) return cannedResponse.PreconditionFailed(res, strs.Theme.UsedByCampaign);
+        const campaigns = await Campaign.find({ theme: theme._id }).lean();
+        if (campaigns.length) return cannedResponse.Conflict(res, strs.Theme.UsedByCampaign);
         await theme.deleteOne();
-        cannedResponse.Gone(res);
+        cannedResponse.Gone(res, strs.Theme.Deleted);
     } catch (e) {
         console.error(e);
         cannedResponse.InternalServerError(res);

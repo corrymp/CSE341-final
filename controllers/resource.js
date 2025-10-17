@@ -52,7 +52,7 @@ async function putResource(req, res) {
         if (req.body.home_campaign && !campaign._id.equals(req.body.home_campaign)) return cannedResponse.NotAcceptable(res, strs.Resource.UpdateHomeCampaign);
         resource.resource = req.body.resource ?? resource.resource;
         await resource.save();
-        cannedResponse.NoContent(res, strs.Resource.Updated);
+        cannedResponse.OK(res, strs.Resource.Updated);
     } catch (e) {
         console.error(e);
         cannedResponse.InternalServerError(res);
@@ -62,13 +62,13 @@ async function putResource(req, res) {
 // /campaign/{id}/resource/{id2} DELETE => delete campaign resource
 async function deleteResource(req, res) {
     try {
-        const campaign = await Campaign.findById(req.params.id);
+        const campaign = await Campaign.findById(req.params.id).lean();
         if (!campaign) return cannedResponse.NotFound(res, strs.Campaign.Unknown);
         const resource = await Resource.findById(req.params.id2);
         if (!resource) return cannedResponse.NotFound(res, strs.Resource.Unknown);
-        if (campaign.invalid_code.equals(resource._id)) return cannedResponse.PreconditionNotMet(res, strs.Resource.UsedByCampaign);
-        const codes = Code.find({ target_resource: resource._id });
-        if (codes) return cannedResponse.PreconditionNotMet(res, strs.Resource.UsedByCode);
+        if (campaign.invalid_code?.equals(resource._id)) return cannedResponse.Conflict(res, strs.Resource.UsedByCampaign);
+        const codes = await Code.find({ target_resource: resource._id }).lean();
+        if (codes.length) return cannedResponse.Conflict(res, strs.Resource.UsedByCode);
         await resource.deleteOne();
         cannedResponse.Gone(res, strs.Resource.Deleted);
     } catch (e) {

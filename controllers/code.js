@@ -77,7 +77,7 @@ async function putCode(req, res) {
         // existingCode.valid_until = req.body.valid_until ?? existingCode.valid_until;
 
         await existingCode.save();
-        cannedResponse.NoContent(res, strs.Code.Updated);
+        cannedResponse.OK(res, strs.Code.Updated);
     } catch (e) {
         console.error(e);
         cannedResponse.InternalServerError(res);

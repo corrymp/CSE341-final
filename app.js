@@ -1,4 +1,5 @@
 require('dotenv').config();
+const jwt = require('jsonwebtoken');
 const { handleErrors, verifyJwt, strs, cannedResponse } = require('./utils');
 const DEVELOPMENT = 'development';
 
@@ -59,6 +60,7 @@ class App {
     }
 
     auth() {
+        console.info('using live auth');
         this._app.use(
             require('express-openid-connect').auth({
                 auth0Logout: true,
@@ -76,20 +78,20 @@ class App {
                     logout: `/logout`,
                     postLogoutRedirect: `/`
                 },
-                afterCallback: (req, res, sess, state) => {
-                    console.dir([sess, state]);
-                    res.cookie('__argapi.didAuthenticate__', 1);
-                    res.locals.auth = 1;
+                afterCallback: (req, res, sess) => {
+                    const id = jwt.decode(sess.id_token);
+                    res.cookie(process.env.CK_NAME, jwt.sign(id, process.env.ACCESS_TOKEN_SECRET), { httpOnly: true, maxAge: 3600000, secure: process.env.NODE_ENVIRONMENT !== DEVELOPMENT });
                 },
-                session: { name: '__argapi.sess__' }
+                session: { name: '__argapi_sess__' }
             })
         );
         return this;
     }
 
     mockAuth(mocker) {
-        let loggedin = 1;
-        let account = { type: 'ADMIN' };
+        console.info('using mock auth');
+        let loggedin;
+        let account = { type: 'ADMIN', _id: '68edcf24c60f4b97b6c4c5e6' };
 
         let locals = {
             loggedin,
@@ -124,6 +126,28 @@ class App {
 
     routes() {
         this._app
+            .use(async (req, res, next) => {
+                // set by auth0 when logging out
+                if (req.cookies.skipSilentLogin) {
+                    res.clearCookie('skipSilentLogin');
+                    res.clearCookie('jwt');
+                    res.clearCookie(process.env.CK_NAME);
+                    return next();
+                }
+
+                if (req.cookies.jwt) return next();
+                if (!req.cookies[process.env.CK_NAME]) return next();
+
+                const data = jwt.verify(req.cookies[process.env.CK_NAME], process.env.ACCESS_TOKEN_SECRET);
+
+                if (this._db) {
+                    const user = await this._db.models.User.findOne({ ident: data.sub }).lean();
+                    if (!user) return next();
+
+                    res.cookie('jwt', jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, { expiresIn: 3600000 }), { httpOnly: true, maxAge: 3600000, secure: process.env.NODE_ENV !== DEVELOPMENT });
+                }
+                next();
+            })
             .use(handleErrors(verifyJwt))
             .use(handleErrors(require('./routes')))
             .use((req, res, next) => next({ status: 404, message: '404' }))

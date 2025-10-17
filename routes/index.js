@@ -7,9 +7,7 @@ const { getSwaggerJson } = require('../utils');
 // no auth
 router.use('/api-docs', swaggerUi.serve, swaggerUi.setup(getSwaggerJson()));
 router.get('/', home.home);
-router.get('/login', home.login);
 router.get('/logout', home.logout);
-router.get('/loggedin', home.loggedIn);
 router.get('/swagger.json', home.sendSwaggerJson);
 
 // no auth
