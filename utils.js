@@ -8,6 +8,7 @@ const strs = {
     Connected: `database conected - app listening on ${process.env.HOST}:${process.env.PORT}`,
     Unauthorized: 'Unauthorized - please authenticate',
     RequestErr: 'An error occured whilst fulfilling the request.',
+    Denied: 'Access Denied',
 
     Campaign: {
         Updated: 'Campaign updated',
@@ -65,7 +66,7 @@ const { StatusCodes, cannedResponse } = (StatusCodes => {
         for (const [codeName, code] of Object.entries(resType)) {
             const splitName = codeName.replace(/^(?:.+_)?([A-Z]*)([A-Z][a-z]+)([A-Z][a-z]+)?([A-Z][a-z]+)?([A-Z][a-z]+)?([A-Z][a-z]+)?/g, regRep);
             StatusCodes[codeName] = code;
-            cannedResponse[codeName] = (res, msg) => res.status(code).json(typeof msg === 'object' ? msg : { message: msg ?? splitName });
+            cannedResponse[codeName] = cannedResponse[code] = (res, msg) => res.status(code).json(typeof msg === 'object' ? msg : { message: msg ?? splitName });
         }
     return { StatusCodes, cannedResponse };
 })({
@@ -163,10 +164,7 @@ const UserPermLevels = {
 const getSwaggerJson = (() => {
     const json = require('./swagger.json');
 
-    if (process.env.NODE_ENVIRONMENT === DEVELOPMENT) {
-        const authorizationCode = json.components.securitySchemes.accessCode.flows.authorizationCode;
-        authorizationCode.tokenUrl = authorizationCode.authorizationUrl = (json.servers[0].url = `http://${process.env.HOST}:${process.env.PORT}`) + '/login';
-    }
+    if (process.env.NODE_ENVIRONMENT === DEVELOPMENT) json.servers[0].url = `${process.env.SCHEME}://${process.env.HOST}:${process.env.PORT}`;
 
     return () => json;
 })();
@@ -293,7 +291,7 @@ function requiredPermissionLevel(level, allowSelf = false) {
     const minPermLevel = UserPermLevels[level];
 
     return (req, res, next) => {
-        //if(process.env.NODE_ENVIRONMENT === DEVELOPMENT) console.log('checking permissions level. Needed level: ' + level + '. Has: ' + res.locals?.account?.type);
+        if (process.env.NODE_ENVIRONMENT === DEVELOPMENT) console.log('checking permissions level. Needed level: ' + level + '. Has: ' + res.locals?.account?.type);
         if (!res.locals.loggedin) return cannedResponse.Unauthorized(res, strs.Unauthorized);
 
         const type = res.locals?.account?.type;
@@ -301,7 +299,7 @@ function requiredPermissionLevel(level, allowSelf = false) {
 
         if (allowSelf && res.locals?.account?._id === req.params.id) return next();
 
-        if (permLevel < minPermLevel) return cannedResponse.Forbidden(res, 'Access Denied, scrub');
+        if (permLevel < minPermLevel) return cannedResponse.Forbidden(res, strs.Denied);
         next();
     };
 }

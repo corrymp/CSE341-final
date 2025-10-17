@@ -11,13 +11,23 @@ function sendSwaggerJson(req, res) {
     }
 }
 
-function home(req, res) {
+function home(req, res, next) {
     try {
+        if (req.cookies['__argapi.didAuthenticate__']) return loggedIn(req, res, next);
         res.sendFile(path.join(__dirname, '../', 'views', 'index.html'));
     } catch (e) {
         console.error(e);
         cannedResponse.InternalServerError(res);
     }
+}
+
+function login(req, res) {
+    res.redirect('/loggedin');
+}
+
+function logout(req, res) {
+    res.clearCookie('jwt');
+    res.redirect('/');
 }
 
 async function loggedIn(req, res) {
@@ -29,7 +39,19 @@ async function loggedIn(req, res) {
 
         const oauthUserData = req.oidc.user;
         const userId = oauthUserData.sub;
-        const user = await User.findOne({ ident: userId });
+        let user;
+        if (res.locals.mock) {
+            user = {
+                _doc: {
+                    _id: '6e5c4c6b79b4f06c42fcde86',
+                    type: 'ADMIN',
+                    account: {
+                        nickname: 'mockuser',
+                        sub: 'mock|123456789'
+                    }
+                }
+            };
+        } else user = await User.findOne({ ident: userId });
 
         if (user) {
             grantJwt(res, user._doc);
@@ -55,5 +77,7 @@ async function loggedIn(req, res) {
 module.exports = {
     sendSwaggerJson,
     home,
+    login,
+    logout,
     loggedIn
 };

@@ -1,5 +1,5 @@
-if (!process.env.ENV_LOADED) require('dotenv').config();
-const { handleErrors, verifyJwt, strs } = require('./utils');
+require('dotenv').config();
+const { handleErrors, verifyJwt, strs, cannedResponse } = require('./utils');
 const DEVELOPMENT = 'development';
 
 class App {
@@ -61,12 +61,27 @@ class App {
     auth() {
         this._app.use(
             require('express-openid-connect').auth({
-                authRequired: false,
                 auth0Logout: true,
-                secret: process.env.OAUTH_SECRET,
-                baseURL: process.env.BASE_URL,
-                clientID: process.env.OAUTH_ID,
-                issuerBaseURL: process.env.OAUTH_URL
+                authorizationParams: {
+                    response_mode: 'query',
+                    response_type: 'code',
+                    scope: 'openid argapi'
+                },
+                authRequired: false,
+                enableTelemetry: false,
+                routes: {
+                    backchannelLogout: `/backchannel-logout`,
+                    callback: `/callback`,
+                    login: `/login`,
+                    logout: `/logout`,
+                    postLogoutRedirect: `/`
+                },
+                afterCallback: (req, res, sess, state) => {
+                    console.dir([sess, state]);
+                    res.cookie('__argapi.didAuthenticate__', 1);
+                    res.locals.auth = 1;
+                },
+                session: { name: '__argapi.sess__' }
             })
         );
         return this;
@@ -82,6 +97,19 @@ class App {
         };
 
         this._app.use((req, res, next) => {
+            req.oidc = res.oidc = {
+                user: { sub: 'sandwich' },
+                req,
+                res,
+                next,
+                idTokenClaims: [],
+                login: () => {},
+                logout: () => {},
+                callback: () => {},
+                isAuthenticated: () => true,
+                errorOnRequiredAuth: false,
+                backchannelLogout: () => {}
+            };
             res.locals.mock = true;
             for (const [k, v] of Object.entries(locals)) res.locals[k] = v;
             next();
@@ -95,21 +123,20 @@ class App {
     }
 
     routes() {
-        const router = require('./routes');
         this._app
             .use(handleErrors(verifyJwt))
-            .use(handleErrors(router))
+            .use(handleErrors(require('./routes')))
             .use((req, res, next) => next({ status: 404, message: '404' }))
             .use((err, req, res, next) => {
+                if (err === 'auth') return console.log(err);
                 if (next.shutupeslint) next;
-                if (process.env.NODE_ENVIRONMENT === DEVELOPMENT) console.log('Unknown path accessed: ' + req.originalUrl);
                 if (err.status === 401) err.message = strs.Unauthorized;
                 else if (err.status !== 404) {
                     console.error(`An error occured whilst accessing "${req.originalUrl}":`, err.message);
                     console.dir(err);
                     err.message = strs.RequestErr;
-                }
-                res.status(err.status ?? 500).send(err.message);
+                } else if (process.env.NODE_ENVIRONMENT === DEVELOPMENT) console.log('Unknown path accessed: ' + req.originalUrl);
+                cannedResponse[err.status ?? 500](res, err.message);
             });
         return this;
     }
@@ -122,7 +149,8 @@ class App {
         const app = new App();
         await app.init();
         await app.db();
-        await app.auth();
+        if (process.env.USE_AUTH === 'yes') await app.auth();
+        else await app.mockAuth({});
         await app.routes();
         await app.listen(process.env.PORT, () => console.log(strs.Connected));
     }

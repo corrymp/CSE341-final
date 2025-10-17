@@ -2557,11 +2557,15 @@
                 "type": "oauth2",
                 "flows": {
                     "authorizationCode": {
-                        "authorizationUrl": "https://argapi.onrender.com/login",
-                        "tokenUrl": "https://argapi.onrender.com/login",
+                        "authorizationUrl": "https://dev-x2gdzvtgtro4gc81.us.auth0.com/authorize",
+                        "tokenUrl": "https://dev-x2gdzvtgtro4gc81.us.auth0.com/oauth/token",
                         "scopes": {
-                            "write": "allows modifying resources",
-                            "read": "allows reading resources"
+                            "openid": "allow access to your identity information",
+                            "profile": "allow access to your profile information",
+                            "email": "allow access to your email",
+                            "api_access": "allow access to ARGAPI",
+                            "write": "allow modifying ARGAPI  resources",
+                            "read": "allow reading ARGAPI resources"
                         }
                     }
                 }
