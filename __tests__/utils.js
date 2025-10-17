@@ -1,9 +1,11 @@
 const { describe, expect, it } = require('@jest/globals');
 const request = require('supertest');
-const { Types: { ObjectId } } = require('mongoose');
-const newObjectId = () => (new ObjectId).toString();
+const {
+    Types: { ObjectId }
+} = require('mongoose');
+const newObjectId = () => new ObjectId().toString();
 
-describe.skip('Jest can be rather annoying', () => { it('should let this pass though', done => done()) });
+describe('Jest can be rather annoying', () => it('should let this pass though', done => done()));
 
 jest.mock('express-openid-connect', () => ({
     requiresAuth: jest.fn(() => (req, res, next) => next()),
@@ -29,103 +31,103 @@ const margFallbackId = newObjectId();
 const fantFallbackId = newObjectId();
 
 const Themes = {
-    highFantasy: { _id: newObjectId(), name: "High Fantasy", description: "High Fantasy is known for its use of swords, magic, and often elves." },
-    lowFantasy: { _id: newObjectId(), name: "Low Fantasy", description: "Low Fantasy is known for its use of swords, no magic, and rarely elves." },
-    futuristic: { _id: newObjectId(), name: "Futuristic", description: "Embrace the future!" },
-    fantasy: { _id: newObjectId(), name: "Fantasy", description: "Castles and Magic abound!" },
-    modern: { _id: newObjectId(), name: "Modern", description: "Our day is now!" },
-    dystopian: { _id: newObjectId(), name: "Dystopian", description: "Literally 1984." }
+    highFantasy: { _id: newObjectId(), name: 'High Fantasy', description: 'High Fantasy is known for its use of swords, magic, and often elves.' },
+    lowFantasy: { _id: newObjectId(), name: 'Low Fantasy', description: 'Low Fantasy is known for its use of swords, no magic, and rarely elves.' },
+    futuristic: { _id: newObjectId(), name: 'Futuristic', description: 'Embrace the future!' },
+    fantasy: { _id: newObjectId(), name: 'Fantasy', description: 'Castles and Magic abound!' },
+    modern: { _id: newObjectId(), name: 'Modern', description: 'Our day is now!' },
+    dystopian: { _id: newObjectId(), name: 'Dystopian', description: 'Literally 1984.' }
 };
 
 const Users = {
     alex: {
         _id: newObjectId(),
         account: {
-            nickname: "alex",
-            sub: "github|123456789"
+            nickname: 'alex',
+            sub: 'github|123456789'
         },
-        ident: "github|123456789",
-        type: "ADMIN"
+        ident: 'github|123456789',
+        type: 'ADMIN'
     },
     benjamin: {
         _id: newObjectId(),
         account: {
-            nickname: "benjamin",
-            sub: "github|345678912"
+            nickname: 'benjamin',
+            sub: 'github|345678912'
         },
-        ident: "github|345678912",
-        type: "ORGANIZER"
+        ident: 'github|345678912',
+        type: 'ORGANIZER'
     },
     caleb: {
         _id: newObjectId(),
         account: {
-            nickname: "caleb",
-            sub: "github|678912345"
+            nickname: 'caleb',
+            sub: 'github|678912345'
         },
-        ident: "github|678912345",
-        type: "ORGANIZER"
+        ident: 'github|678912345',
+        type: 'ORGANIZER'
     },
     daniel: {
         _id: newObjectId(),
         account: {
-            nickname: "daniel",
-            sub: "github|912345678"
+            nickname: 'daniel',
+            sub: 'github|912345678'
         },
-        ident: "github|912345678",
-        type: "VIEWER"
+        ident: 'github|912345678',
+        type: 'VIEWER'
     }
 };
 
 const Campaigns = {
     rohanmystery: {
         _id: newObjectId(),
-        base_url: "rohanmystery",
-        title: "Mystery in the Plains of Rohan",
+        base_url: 'rohanmystery',
+        title: 'Mystery in the Plains of Rohan',
         summary: "Something has happened in Rohan. What happened? Well, that's for you to discover...",
         theme: Themes.highFantasy._id
     },
     marg: {
         _id: newObjectId(),
-        base_url: "marg",
-        title: "A Modern ARG",
+        base_url: 'marg',
+        title: 'A Modern ARG',
         summary: "It's very modern",
         theme: Themes.modern._id,
-        open_at: new Date("1997-09-29T00:00:00.000Z"),
+        open_at: new Date('1997-09-29T00:00:00.000Z'),
         invalid_code: margFallbackId
     },
     fant: {
         _id: newObjectId(),
-        base_url: "fant",
-        title: "Fantasy ARG",
+        base_url: 'fant',
+        title: 'Fantasy ARG',
         summary: "It's very fantasy",
         theme: Themes.fantasy._id,
-        open_at: new Date("2002-02-26T00:00:00.000Z"),
+        open_at: new Date('2002-02-26T00:00:00.000Z'),
         invalid_code: fantFallbackId
     },
     war: {
         _id: newObjectId(),
-        base_url: "war",
-        title: "Modern Warfare ARG",
+        base_url: 'war',
+        title: 'Modern Warfare ARG',
         summary: "It's very violent",
         theme: Themes.modern._id,
-        open_at: new Date("1999-09-03T00:00:00.000Z")
+        open_at: new Date('1999-09-03T00:00:00.000Z')
     },
     space: {
         _id: newObjectId(),
-        base_url: "space",
-        title: "The Great Space Race",
+        base_url: 'space',
+        title: 'The Great Space Race',
         summary: "It's very futuristic",
         theme: Themes.futuristic._id,
-        open_at: new Date("1995-11-13T00:00:00.000Z")
+        open_at: new Date('1995-11-13T00:00:00.000Z')
     },
     1984: {
         _id: newObjectId(),
-        base_url: "1984",
-        title: "1984",
-        summary: "1984",
+        base_url: '1984',
+        title: '1984',
+        summary: '1984',
         theme: Themes.dystopian._id,
-        open_at: new Date("1984-04-04T00:00:00.000Z"),
-        close_at: new Date("1986-03-14T00:00:00.000Z")
+        open_at: new Date('1984-04-04T00:00:00.000Z'),
+        close_at: new Date('1986-03-14T00:00:00.000Z')
     }
 };
 
@@ -134,47 +136,47 @@ const Resources = {
         _id: newObjectId(),
         home_campaign: Campaigns.rohanmystery._id,
         resource: {
-            type: "html",
-            html: "<p>This is a resource!</p>"
+            type: 'html',
+            html: '<p>This is a resource!</p>'
         }
     },
     mission1: {
         _id: newObjectId(),
         home_campaign: Campaigns.marg._id,
         resource: {
-            "type": "string",
-            "string": "Objective: Go to the bank"
+            type: 'string',
+            string: 'Objective: Go to the bank'
         }
     },
     teller: {
         _id: newObjectId(),
         home_campaign: Campaigns.marg._id,
         resource: {
-            type: "string",
-            string: "Objective: withdraw life savings"
+            type: 'string',
+            string: 'Objective: withdraw life savings'
         }
     },
     gaze: {
         _id: newObjectId(),
         home_campaign: Campaigns.fant._id,
         resource: {
-            type: "string",
-            string: "Hello stranger! Can I interest you in some wares?"
+            type: 'string',
+            string: 'Hello stranger! Can I interest you in some wares?'
         }
     },
     missioncontrol: {
         _id: newObjectId(),
         home_campaign: Campaigns.space._id,
         resource: {
-            type: "string",
-            string: "Houston, we have a problem."
+            type: 'string',
+            string: 'Houston, we have a problem.'
         }
     },
     moon: {
         _id: newObjectId(),
         home_campaign: Campaigns.space._id,
         resource: {
-            type: "string",
+            type: 'string',
             string: "Moon's stuck in a time loop."
         }
     },
@@ -182,16 +184,16 @@ const Resources = {
         _id: margFallbackId,
         home_campaign: Campaigns.marg._id,
         resource: {
-            type: "string",
-            string: "This is a fallback resource!"
+            type: 'string',
+            string: 'This is a fallback resource!'
         }
     },
     fant_fallback: {
         _id: fantFallbackId,
         home_campaign: Campaigns.fant._id,
         resource: {
-            type: "string",
-            string: "This is also a fallback resource!"
+            type: 'string',
+            string: 'This is also a fallback resource!'
         }
     }
 };
@@ -199,7 +201,7 @@ const Resources = {
 const Codes = {
     theoden: {
         _id: newObjectId(),
-        code: "theoden",
+        code: 'theoden',
         target_resource: Resources.theoden._id,
         home_campaign: Campaigns.rohanmystery._id,
         valid_after: past,
@@ -207,7 +209,7 @@ const Codes = {
     },
     mission1: {
         _id: newObjectId(),
-        code: "mission1",
+        code: 'mission1',
         target_resource: Resources.mission1._id,
         home_campaign: Campaigns.marg._id,
         valid_after: past,
@@ -215,7 +217,7 @@ const Codes = {
     },
     missioncontrol: {
         _id: newObjectId(),
-        code: "missioncontrol",
+        code: 'missioncontrol',
         target_resource: Resources.missioncontrol._id,
         home_campaign: Campaigns.space._id,
         valid_after: past,
@@ -223,7 +225,7 @@ const Codes = {
     },
     gaze: {
         _id: newObjectId(),
-        code: "gaze",
+        code: 'gaze',
         target_resource: Resources.gaze._id,
         home_campaign: Campaigns.fant._id,
         valid_after: past,
@@ -231,7 +233,7 @@ const Codes = {
     },
     moon: {
         _id: newObjectId(),
-        code: "moon",
+        code: 'moon',
         target_resource: Resources.moon._id,
         home_campaign: Campaigns.space._id,
         valid_after: past,
@@ -239,7 +241,7 @@ const Codes = {
     },
     teller: {
         _id: newObjectId(),
-        code: "teller",
+        code: 'teller',
         target_resource: Resources.teller._id,
         home_campaign: Campaigns.marg._id,
         valid_after: past,
@@ -450,7 +452,7 @@ const URL = {
                 invalid: `/user/${fake.user._id}/campaigns`
             }
         }
-    },
+    }
 };
 
 class Mocker {
@@ -460,7 +462,7 @@ class Mocker {
             loggedin: 1,
             account: { type: 'ADMIN' }
         });
-    };
+    }
 
     static SanitizeCampaign = campaign => ({ title: campaign.title, theme: campaign.theme, base_url: campaign.base_url, summary: campaign.summary });
     static SanitizeCampaigns = campaigns => campaigns.map(c => Mocker.SanitizeCampaign(c));
@@ -480,7 +482,7 @@ class Mocker {
     static NotFound = Object.freeze({ message: 'Not Found' });
 
     static SetLocals = () => null;
-    static doLogs = true;
+    static doLogs = false;
 
     static Search(_, q, op, collection) {
         let log = '';
@@ -492,49 +494,40 @@ class Mocker {
         Mocker.doLogs && (log += 'BEFORE ' + JSON.stringify(results) + '\n');
 
         for (const [k, v] of Object.entries(q))
-            results = results.filter(
-                i => {
-                    if (v instanceof ObjectId) return v.equals(i[k]);
-                    else if (typeof k === 'object') {
-                        if (v.$in) if (v.$in.includes(i[k])) return true;
-                        for (const [k2, v2] of Object.entries(k)) console.log('//! I need help checking this:', k, v, k2, v2, i[k]);
-                        return false;
-                    }
-                    else return i[k] === v;
-                }
-            ),
-
-                Mocker.doLogs && (log += 'AFTER ' + JSON.stringify(results) + '\n');
+            ((results = results.filter(i => {
+                if (v instanceof ObjectId) return v.equals(i[k]);
+                else if (typeof k === 'object') {
+                    if (v.$in) if (v.$in.includes(i[k])) return true;
+                    for (const [k2, v2] of Object.entries(k)) console.log('//! I need help checking this:', k, v, k2, v2, i[k]);
+                    return false;
+                } else return i[k] === v;
+            })),
+                Mocker.doLogs && (log += 'AFTER ' + JSON.stringify(results) + '\n'));
         Mocker.doLogs && console.log(log + 'AFTER ' + JSON.stringify(results));
         return op === 'find' ? results : (results[0] ?? null);
-    };
-
+    }
 
     static Theme = q => Mocker.Search(q, q._conditions, q.op, Mocker._Theme);
     static User = q => Mocker.Search(q, q._conditions, q.op, Mocker._User);
     static Campaign = q => Mocker.Search(q, q._conditions, q.op, Mocker._Campaign);
     static Resource = q => Mocker.Search(q, q._conditions, q.op, Mocker._Resource);
     static Code = q => Mocker.Search(q, q._conditions, q.op, Mocker._Code);
-    static Manager = q => {
-        let log = '';
-        const cond = q._conditions;
-        const op = q.op;
-        let results = [...Mocker.Managers];
-        log += ('SETUP ' + JSON.stringify(cond) + ' ' + op + '\n' + 'BEFORE ' + JSON.stringify(results) + '\n');
-        if (cond.user) {
-            results = results.filter(i => i.user.toString() === cond.user.toString());
-            log += ('AFTER ' + JSON.stringify(results) + '\n');
-        };
-        if (cond.campaign) {
-            results = results.filter(i => i.campaign.toString() === cond.campaign.toString());
-        };
-        console.log(log + '\nAFTER ' + JSON.stringify(results));
-        return op === 'find' ? results : results[0] ?? null;
-    }; //Mocker.Search(q, q._conditions, q.op, Mocker.Managers);
-};
+    static Manager = q => Mocker.Search(q, q._conditions, q.op, Mocker.Managers);
+}
 
 const App = require('../app');
-const app = new App().init().mockAuth(Mocker).routes().app;
+
+const app = new App(this_app => {
+    this_app._app.use('/crash', (req, res, next) => {
+        console.log('/crash was accessed during a test... How about I pass an error instead?');
+        if (req && res && next) next(new Error('Jest and ESLint made me do it'));
+        else next();
+    });
+})
+    .init()
+    .mockAuth(Mocker)
+    .runCallback()
+    .routes().app;
 
 const Mockingoose = require('mockingoose');
 const Campaign = require('../models/campaign');
@@ -565,7 +558,7 @@ function DescribeIt(testName, url, status, result) {
     it(testName, async () => {
         const response = await request(app).get(url);
 
-        if (status && status !== response.statusCode || result && JSON.stringify(result) !== JSON.stringify(response.body)) {
+        if ((status && status !== response.statusCode) || (result && JSON.stringify(result) !== JSON.stringify(response.body))) {
             const lineLength = testName.length + url.length + 2;
             const linebreak = ''.padStart(lineLength, '=');
             const subbreak = ''.padStart(lineLength, '-');
@@ -583,18 +576,18 @@ ${subbreak}
 
 ${linebreak}
 `);
-        };
+        }
 
         if (status) expect(response.statusCode).toBe(status);
         if (result) expect(response.body).toEqual(result);
     });
-};
+}
 
 function Jester(blockName, opts, ...descriptions) {
     if (Array.isArray(opts)) {
         descriptions.unshift(opts);
         opts = undefined;
-    };
+    }
     opts = opts ?? {};
 
     Mocker.Defaults();
@@ -602,10 +595,9 @@ function Jester(blockName, opts, ...descriptions) {
     if (opts.locals !== undefined) Mocker.SetLocals(opts.locals);
     if (opts.log !== undefined) Mocker.doLogs = opts.log;
 
-    if (opts.skip !== undefined) describe.skip(blockName, () => { });
-    else
-        describe(blockName, () => descriptions.forEach(description => DescribeIt(...description)));
-};
+    if (opts.skip !== undefined) describe.skip(blockName, () => {});
+    else describe(blockName, () => descriptions.forEach(description => DescribeIt(...description)));
+}
 
 Jester.DescribeIt = DescribeIt;
 

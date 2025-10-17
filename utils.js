@@ -198,24 +198,27 @@ function sanitizeCampaigns(campaigns) {
  */
 async function resolveToIdOrName(idOrName, type, specialSearch) {
     try {
-    let result;
+        let result;
 
-    // valid ID: check for item of type with ID
-    if (ObjectId.isValid(idOrName)) result = await type.findById(idOrName);
+        // valid ID: check for item of type with ID
+        if (ObjectId.isValid(idOrName)) result = await type.findById(idOrName);
 
-    // results found: is an ID
-    if (result) return { result: 1, id: result._id };
+        // results found: is an ID
+        if (result && result._id) return { result: 1, id: result._id };
 
-    // invalid ID or no results: check for item of type with name (or special search term)
-    if (specialSearch) result = await type.findOne({ [specialSearch]: idOrName });
-    else result = await type.findOne({ name: idOrName });
+        // invalid ID or no results: check for item of type with name (or special search term)
+        if (specialSearch) result = await type.findOne({ [specialSearch]: idOrName });
+        else result = await type.findOne({ name: idOrName });
 
-    // results found: was a name/special:
-    if (result) return { result: -1, id: result._id };
+        // results found: was a name/special:
+        if (result && result._id) return { result: -1, id: result._id };
 
-    // no results: not an ID or name/special
-    return { result: 0, id: null };
-} catch(e) {console.error(`Trouble resolving id/${specialSearch??'name'}: ${idOrName}, ${e.message}`); return {result: 0, id: null}}
+        // no results: not an ID or name/special
+        return { result: 0, id: null };
+    } catch (e) {
+        console.error(`Trouble resolving id/${specialSearch ?? 'name'}: ${idOrName}, ${e.message}`);
+        return { result: 0, id: null };
+    }
 }
 
 //#region validation

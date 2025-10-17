@@ -1,6 +1,6 @@
 const { body, param } = require('express-validator');
 
-const normalizeJSONToString = val => typeof val !== 'object' ? val : JSON.stringify(val);
+const normalizeJSONToString = val => (typeof val !== 'object' ? val : JSON.stringify(val));
 const nowMakeItJSONAgain = val => JSON.parse(val);
 
 module.exports = {

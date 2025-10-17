@@ -4,7 +4,7 @@ const Resource = require('../models/resource');
 const { cannedResponse, sanitizeCampaigns } = require('../utils');
 
 /**
- * @param {Number|undefined} lower - lower bounds to check. Check fails if `undefined` 
+ * @param {Number|undefined} lower - lower bounds to check. Check fails if `undefined`
  * @param {Number} subject - the item being checked
  * @param {Number|undefined} upper - upper bounds to check. Sets to a number bigger than `subject` if `undefined`
  */
@@ -13,8 +13,8 @@ const validRange = (lower, subject, upper) => lower && lower < subject && subjec
 async function getCampaignOrNotFound(base_url, res) {
     try {
         const campaign = await Campaign.findOne({ base_url }).lean();
-        if (!campaign) return cannedResponse.NotFound(res), null;
-        if (!validRange(campaign.open_at && Date.parse(campaign.open_at), Date.now(), campaign.close_at && Date.parse(campaign.close_at))) return cannedResponse.NotFound(res), null;
+        if (!campaign) return (cannedResponse.NotFound(res), null);
+        if (!validRange(campaign.open_at && Date.parse(campaign.open_at), Date.now(), campaign.close_at && Date.parse(campaign.close_at))) return (cannedResponse.NotFound(res), null);
         return campaign;
     } catch (e) {
         console.error(e);

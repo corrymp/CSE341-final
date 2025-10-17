@@ -56,7 +56,7 @@ async function getManagers(req, res) {
 async function getUsersManagingCampaign(req, res) {
     try {
         const campaign = await Campaign.findById(req.params.id);
-        if(!campaign) return cannedResponse.NotFound(res, strs.Campaign.Unknown);
+        if (!campaign) return cannedResponse.NotFound(res, strs.Campaign.Unknown);
         const managerList = await getManagerByCampaign(req.params.id);
         const managers = await User.find({ _id: { $in: managerList } });
         cannedResponse.OK(res, { managers });
@@ -70,7 +70,7 @@ async function getUsersManagingCampaign(req, res) {
 async function getCampaignsManagedByUser(req, res) {
     try {
         const user = await User.findById(req.params.id);
-        if(!user) return cannedResponse.NotFound(res, strs.User.Unknown);
+        if (!user) return cannedResponse.NotFound(res, strs.User.Unknown);
         const campaignList = await getManagerByCampaign(req.params.id);
         const campaigns = await Campaign.find({ _id: { $in: campaignList } });
         cannedResponse.OK(res, { campaigns });

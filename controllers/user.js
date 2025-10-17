@@ -28,7 +28,7 @@ async function getUsers(req, res) {
 // /user/{id} GET => (protected:admin||self) read user
 async function getUser(req, res) {
     try {
-        const user = await User.findOne({_id: req.params.id});
+        const user = await User.findOne({ _id: req.params.id });
         if (!user) return cannedResponse.NotFound(res, strs.User.Unknown);
         cannedResponse.OK(res, { user });
     } catch (e) {

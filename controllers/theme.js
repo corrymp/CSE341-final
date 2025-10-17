@@ -29,7 +29,7 @@ async function getThemes(req, res) {
 // /theme/{id|name} GET => read theme
 async function getThemeByIdOrName(req, res) {
     try {
-        const idOrName = await resolveToIdOrName(req.params.idOrName);
+        const idOrName = await resolveToIdOrName(req.params.idOrName, Theme);
         if (!idOrName.result) return cannedResponse.NotFound(res, strs.Theme.Unknown);
         const theme = await Theme.findById(idOrName.id).lean();
         cannedResponse.OK(res, { theme });

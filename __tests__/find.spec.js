@@ -1,20 +1,3 @@
-const {Mocker, Jester} = require('./utils');
+const { Mocker, Jester } = require('./utils');
 
-Jester('3 | /find routes', 
-    ['3.1 | should have status 200', Mocker.URL.find, 200],
-    ['3.2 | should have status 200', Mocker.URL.find.theme, 200],
-    ['3.3 | should have status 200', Mocker.URL.find.ongoing, 200],
-    ['3.4 | should have status 200', Mocker.URL.find.concluded, 200],
-    ['3.5 | should have status 200 on valid theme id', Mocker.URL.find.id.valid, 200],
-    ['3.6 | should have status 404 on invalid theme id', Mocker.URL.find.id.invalid, 404],
-    ['3.7 | should have status 200 on valid theme name', Mocker.URL.find.name.valid, 200],
-    ['3.8 | should have status 404 on invalid theme name', Mocker.URL.find.name.invalid, 404],
-    ['3.9 | should have status 200 on valid theme id', Mocker.URL.find.ongoing.id.valid, 200],
-    ['3.10 | should have status 404 on invalid theme id', Mocker.URL.find.ongoing.id.invalid, 404],
-    ['3.11 | should have status 200 on valid theme name', Mocker.URL.find.ongoing.name.valid, 200],
-    ['3.12 | should have status 404 on invalid theme name', Mocker.URL.find.ongoing.name.invalid, 404],
-    ['3.13 | should have status 200 on valid theme id', Mocker.URL.find.concluded.id.valid, 200],
-    ['3.14 | should have status 404 on invalid theme id', Mocker.URL.find.concluded.id.invalid, 404],
-    ['3.15 | should have status 200 on valid theme name', Mocker.URL.find.concluded.name.valid, 200],
-    ['3.16 | should have status 404 on invalid theme name', Mocker.URL.find.concluded.name.invalid, 404]
-);
+Jester('3 | /find routes', ['3.1 | should have status 200', Mocker.URL.find, 200], ['3.2 | should have status 200', Mocker.URL.find.theme, 200], ['3.3 | should have status 200', Mocker.URL.find.ongoing, 200], ['3.4 | should have status 200', Mocker.URL.find.concluded, 200], ['3.5 | should have status 200 on valid theme id', Mocker.URL.find.id.valid, 200], ['3.6 | should have status 404 on invalid theme id', Mocker.URL.find.id.invalid, 404], ['3.7 | should have status 200 on valid theme name', Mocker.URL.find.name.valid, 200], ['3.8 | should have status 404 on invalid theme name', Mocker.URL.find.name.invalid, 404], ['3.9 | should have status 200 on valid theme id', Mocker.URL.find.ongoing.id.valid, 200], ['3.10 | should have status 404 on invalid theme id', Mocker.URL.find.ongoing.id.invalid, 404], ['3.11 | should have status 200 on valid theme name', Mocker.URL.find.ongoing.name.valid, 200], ['3.12 | should have status 404 on invalid theme name', Mocker.URL.find.ongoing.name.invalid, 404], ['3.13 | should have status 200 on valid theme id', Mocker.URL.find.concluded.id.valid, 200], ['3.14 | should have status 404 on invalid theme id', Mocker.URL.find.concluded.id.invalid, 404], ['3.15 | should have status 200 on valid theme name', Mocker.URL.find.concluded.name.valid, 200], ['3.16 | should have status 404 on invalid theme name', Mocker.URL.find.concluded.name.invalid, 404]);
